@@ -1,0 +1,34 @@
+.button_0530xdO{
+
+    width: 60px;
+    height: 60px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    text-decoration: none;
+    color: inherit;
+
+}
+
+.div_349Zfgp{
+    flex: 1;
+
+    display: grid;
+    grid-template-columns: 60px 1fr;
+
+    align-items: center;
+
+    & h4 {
+        font-size: 20px;
+    }
+}
+
+.div_wEan0TY{
+    display: flex;
+}
+
+
+
+/* div_349Zfgp */
