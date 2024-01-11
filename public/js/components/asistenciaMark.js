@@ -83,6 +83,7 @@ export default ( id_asistencia = null )=>{
                     status
                 }
 
+                elementItemDataButton.innerHTML = '<div class="element-loader" style="--color:var(--color-letter)"></div>'
                 fetch( api(`/api/asistencia-list?${ paramQueries( queries ) }`), { method : 'PATCH', body : JSON.stringify( _data ) } )
                     .then( res => res.json() )
                     .then( dataLoadElementItem )
@@ -100,6 +101,7 @@ export default ( id_asistencia = null )=>{
                     status
                 }
 
+                elementItemDataButton.innerHTML = '<div class="element-loader" style="--color:var(--color-letter)"></div>'
                 fetch( api(`/api/asistencia-list?${ paramQueries( queries ) }`), { method : 'POST', body : JSON.stringify( _data ) } )
                     .then( res => res.json() )
                     .then( dataLoadElementItem )
@@ -109,7 +111,7 @@ export default ( id_asistencia = null )=>{
 
     })
 
-    const dataRenderElementItemData =( data = null )=>{
+    const dataRenderElementItemDataItemData =( data = null )=>{
         
         elementItemDataItemData.innerHTML = `
             ${ data == null ? `
@@ -168,7 +170,7 @@ export default ( id_asistencia = null )=>{
 
         fetch( api( `/api/asistencia-list?${ paramQueries( queries ) }` ) )
             .then( res => res.json() )
-            .then( dataRenderElementItemData )
+            .then( dataRenderElementItemDataItemData )
 
         return elementItemData
     }
@@ -205,113 +207,7 @@ export default ( id_asistencia = null )=>{
 
     dataRenderElementItem( undefined )
     dataLoadElementItem()
-    
-
-    // elementItemRender( undefined )
-    // elementItemLoad()
-
+     
     return ElementComponent
 }
-
-
- // const api =(uri = '')=> window.dataApp.api + uri
-    // const paramQueries = (query = {}) => Object.keys(query).map(key => `${ key }=${ query[key] }`).join('&')
-
-    // const Icon = window.dataApp.icon
-    // const user = window.dataApp.user
-
-    // const ElementComponent = ele.create(`
-    //     <div class="div_n76Pr7U">
-    //         <div class="div_GfaM0Ws"></div>
-    //         <div class="div_iRbMV3T scroll-h">
-    //             <div class="div_OdvFgf7">
-    //                 <h3>Asistencia</h3>
-    //                 <button class="button_0530xdO">${ Icon.get('fi fi-rr-cross-small') }</button>
-    //             </div>
-    //             <div id="elementItem" class="div_l46oEtr">
-
  
-    //                 <div id="elementItemList" class="div_7uRSuQW scroll-y">
-    //                     <div class="div_7GjGF16">
-    //                         <div class="div_7t97RMm">
-    //                             <span>Entrada</span>
-    //                             <span>--:--:--</span>
-    //                         </div>
-    //                     </div>
-    //                 </div>
-
-    //                 <div id="elementItemButton" class="div_Hqv639S">
-    //                     <button>Salida</button>
-    //                     <button class="dark">Ingresar</button>
-    //                 </div>
-
-    //             </div>
-    //         </div>
-    //     </div>
-    // `)
-
-    // const elements = ele.object( ElementComponent.querySelectorAll('[id]'), 'id', true )
-    // const { elementItem, elementItemList } = elements
-
-    // const dataRender2 =( data = null )=>{
-    //     console.log(data);
-    // }
-
-    // const dataLoad2 =()=>{
-        
-    //     const queries = {
-
-    //         token : localStorage.getItem('auth-token'),
-    //         query : 3,
-    //         query_limit : 'one',
-    //         id_asistencia : 10000,
-    //         uid_user : user.uid,
-    //         datetime : datetimeToday( null  )
-
-    //     }
-
-    //     fetch( api( `/api/asistencia-list?${ paramQueries( queries ) }` ) )
-    //         .then( res => res.json() )
-    //         .then(  )
-
-    // }
-
-    // const dataRender =( data )=>{
-
-    //     if( !data ) {
-    //         elementItem.innerHTML = `
-    //             <div class="div_CgtrSP7">
-    //                 ${ Icon.get('icon-light box-empty') }
-    //                 <h3>La asistencia no existe</h3>
-    //             </div>
-    //         `
-    //         return
-    //     }
- 
-    //     dataLoad2()
-
-    // }
-
-    // const dataLoad =()=>{
-        
-    //     const queries = {
-
-    //         token : localStorage.getItem('auth-token'),
-    //         query : 3,
-    //         query_limit : 'one',
-    //         id_asistencia : 10000,
-    //         uid_user : user.uid,
-    //         datetime : datetimeToday( null  )
-
-    //     }
-
-    //     fetch( api( `/api/asistencia-user?${ paramQueries( queries ) }` ) )
-    //         .then( res => res.json() )
-    //         .then( dataRender )
-
-    // }
-
-    // dataLoad()
-
-    // return ElementComponent
-
