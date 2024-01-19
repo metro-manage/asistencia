@@ -8,13 +8,12 @@ import Gender from "../data/Gender.js"
 import Position from "../data/Position.js"
 import Month from "../data/Month.js"
 
-export default ()=>{
+export default ( params )=>{
 
     const api =(uri = '')=> window.dataApp.api + uri
     const paramQueries = (query = {}) => Object.keys(query).map(key => `${ key }=${ query[key] }`).join('&')
 
     const Icon = window.dataApp.icon
-    const user = window.dataApp.user
 
     const Title = [
         { key : 'avatar', title : null },
@@ -22,7 +21,7 @@ export default ()=>{
         { key : 'lastname', title : 'Apellido' },
         { key : 'email', title : 'Correo' },
         { key : 'phone', title : 'Telefono' },
-        { key : 'birthdate', title : 'Fecha de nacimiento' },
+        { key : 'birthday', title : 'Fecha de nacimiento' },
         { key : 'gender', title : 'Genero' },
         { key : 'position', title : 'Posicion' },
     ]
@@ -33,8 +32,8 @@ export default ()=>{
             <header id="header" class="header_N8p7RP6">
                     
                 <div class="div_349Zfgp scroll-h">
-                    <a href="#/" class="button_0530xdO pointer">${ Icon.get('fi fi-rr-angle-left') }</a>
-                    <h4 class="text-ellipsis">Mis datos</h4>
+                    <a href="#/usuario" class="button_0530xdO pointer">${ Icon.get('fi fi-rr-angle-left') }</a>
+                    <h4 class="text-ellipsis">Informacion de usuario</h4>
                 </div>
 
                 <div id="elementButton" class="div_div_wEan0TY">
@@ -90,7 +89,7 @@ export default ()=>{
 
         const queries = {
             token : localStorage.getItem('auth-token'),
-            uid    : user.uid
+            uid    : params.id
         }
 
         fetch( api(`/api/user?${ paramQueries( queries ) }`), { method : 'DELETE' } )
@@ -115,9 +114,9 @@ export default ()=>{
     const dataRenderElementItemData =( data = {} )=>{
 
         elementItemData.innerHTML = Title.map( title => {
-
+            
             if( title.key == 'avatar' ) {
-                console.log(data);
+                
                 return `
                     <div class="div_juBP4RD scroll-x" style="padding:15px">
                         <div class="div_5D21Kk4">
@@ -219,7 +218,7 @@ export default ()=>{
             token : localStorage.getItem( 'auth-token' ),
             query : 0,
             query_limit : 'one',
-            uid    : user.uid,
+            uid    : params.id,
         }
 
         fetch( api(`/api/user?${ paramQueries( queries ) }`) )

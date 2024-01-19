@@ -1,4 +1,4 @@
-import formAsistencia from "../components/formAsistencia.js"
+import formCategoria from "../components/formCategoria.js"
 
 export default ()=>{
     
@@ -13,8 +13,8 @@ export default ()=>{
             <header class="header_N8p7RP6">
                     
                 <div class="div_349Zfgp scroll-h">
-                    <a href="#/" class="button_0530xdO pointer">${ Icon.get('fi fi-rr-angle-left') }</a>
-                    <h4 class="text-ellipsis">Asistencia</h4>
+                    <a href="#/inventario" class="button_0530xdO pointer">${ Icon.get('fi fi-rr-angle-left') }</a>
+                    <h4 class="text-ellipsis">Categorias</h4>
                 </div>
 
                 <div class="div_div_wEan0TY">
@@ -28,7 +28,7 @@ export default ()=>{
                 <div id="elementItemLoad" class="element-loader" style="--color:var(--color-letter)"></div>
                 <div id="elementItemNull" class="div_CgtrSP7">
                     ${ Icon.get('icon-light box-empty') }
-                    <h3>Lista vacia</h3>
+                    <h3>El usuario no existe</h3>
                 </div>
                 <div id="elementItemData" class="div_k10Bfb0"></div>
 
@@ -47,13 +47,9 @@ export default ()=>{
     } = ele.object( ElementComponent.querySelectorAll('[id]'), 'id', true )
 
     const elements = {
-        form : formAsistencia(),
-        main : document.getElementById('main')
+        main : document.getElementById('main'),
+        form : formCategoria()
     }
-
-    buttonAdd.addEventListener('click', ()=> {
-        elements.main.append( elements.form )
-    })
 
     elements.form.addEventListener('_submit', e => {
         elements.form.remove()
@@ -62,12 +58,16 @@ export default ()=>{
         }
     })
 
+    buttonAdd.addEventListener('click', ()=> {
+        elements.main.append( elements.form )
+    })
+    
     const dataRenderElementItemData =( Data = [] )=>{
 
         elementItemData.innerHTML = Data.map( (data, index) => {
             return `
                 ${ index == 0 ? '' : '<hr>' }
-                <a href="#/asistencia/${ data.id }" class="a_TE0KsGr pointer">
+                <a href="#/categoria/${ data.id }" class="a_TE0KsGr pointer">
                     ${ data.name }
                     ${ Icon.get('fi fi-rr-angle-small-right') }
                 </a>
@@ -79,29 +79,28 @@ export default ()=>{
 
     const dataRenderElementItem =( Data = [] )=>{
         elementItem.innerHTML = ''
-        elementItem.append(
+        elementItem.append( 
             Data === 0 ? elementItemLoad : '',
-            Array.isArray(Data) && !Data.length ? elementItemNull : '',
-            Array.isArray(Data) && Data.length ? dataRenderElementItemData( Data ) : '',
+            Array.isArray( Data ) && !Data.length ? elementItemNull : '',
+            Array.isArray( Data ) && Data.length ? dataRenderElementItemData( Data ) : '',
         )
+
     }
 
     const dataLoadElementItem =()=>{
-
         const queries = {
             token : localStorage.getItem( 'auth-token' ),
             query : 0,
             query_limit : 50,
         }
 
-        fetch( api(`/api/asistencia?${ paramQueries( queries ) }`) )
+        fetch( api(`/api/categoria?${ paramQueries( queries ) }`) )
             .then( res => res.json() )
             .then( dataRenderElementItem )
-
     }
 
     dataRenderElementItem(0)
-    dataLoadElementItem()
+    dataLoadElementItem()  
     
     return ElementComponent 
 

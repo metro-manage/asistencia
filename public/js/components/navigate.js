@@ -19,7 +19,7 @@ export default ()=>{
 
                     <div class="div_kCRaV9G">
 
-                        <a id="elementUser" href="#" class="div_SHt2V05 pointer">
+                        <a id="elementUser" href="#/usuario/me" class="div_SHt2V05 pointer">
                             <img src="">
                             <div>
                                 <span class="text-ellipsis">-</span>
@@ -43,9 +43,19 @@ export default ()=>{
                                 <span class="text-ellipsis">Inicio</span>
                             </a>
 
+                            <a class="a_rx39DYh pointer" href="#/inventario">
+                                ${ Icon.get('fi fi-rr-box-circle-check') }
+                                <span class="text-ellipsis">Inventario</span>
+                            </a>
+
                             <a class="a_rx39DYh pointer" href="#/asistencia">
                                 ${ Icon.get('fi fi-rr-inventory-alt') }
                                 <span class="text-ellipsis">Asistencia</span>
+                            </a>
+                            
+                            <a class="a_rx39DYh pointer" href="#/usuario">
+                                ${ Icon.get('fi fi-rr-users') }
+                                <span class="text-ellipsis">Usuario</span>
                             </a>
                         </div>
                     
@@ -103,20 +113,17 @@ export default ()=>{
             } ) 
     })
 
-    addEventListener('eNavigate', ()=> {
+    addEventListener('popstate', ()=> {
+        ElementComponent.remove()
 
         elementUser.innerHTML = `
             <img src="${ api(`/storage/user/${ window.dataApp.user.avatar || 'avatar.png' }`) }">
             <div>
                 <span class="text-ellipsis">${ window.dataApp.user.fullname }</span>
-                <p class="text-ellipsis">${ (Position.find( position => position.id ==  window.dataApp.user.position) ?? {}).name ?? '-' }</p>
+                <p class="text-ellipsis">${ Position.find( position => position.id ==  window.dataApp.user.position).name }</p>
             </div>
         `
-
-        elementUser.setAttribute('href', `#/usuario/me`)
     })
-    
-    addEventListener('popstate', ()=> ElementComponent.remove())
 
     return ElementComponent
 }

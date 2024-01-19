@@ -1,4 +1,5 @@
-import formAsistencia from "../components/formAsistencia.js"
+import formUsuario from "../components/formUsuario.js"
+import Position from "../data/Position.js"
 
 export default ()=>{
     
@@ -6,18 +7,19 @@ export default ()=>{
     const paramQueries = (query = {}) => Object.keys(query).map(key => `${ key }=${ query[key] }`).join('&')
 
     const Icon = window.dataApp.icon
+    const user = window.dataApp.user
  
     const ElementComponent = ele.create(`
         <div class="div_FJZ0jdm">
 
-            <header class="header_N8p7RP6">
+            <header id="header" class="header_N8p7RP6">
                     
                 <div class="div_349Zfgp scroll-h">
                     <a href="#/" class="button_0530xdO pointer">${ Icon.get('fi fi-rr-angle-left') }</a>
-                    <h4 class="text-ellipsis">Asistencia</h4>
+                    <h4 class="text-ellipsis">Usuarios</h4>
                 </div>
 
-                <div class="div_div_wEan0TY">
+                <div id="elementButton" class="div_div_wEan0TY">
                     <button id="buttonAdd" class="button_0530xdO pointer">${ Icon.get('fi fi-rr-plus') }</button>
                 </div>
 
@@ -28,27 +30,26 @@ export default ()=>{
                 <div id="elementItemLoad" class="element-loader" style="--color:var(--color-letter)"></div>
                 <div id="elementItemNull" class="div_CgtrSP7">
                     ${ Icon.get('icon-light box-empty') }
-                    <h3>Lista vacia</h3>
+                    <h3>El elemento no existe</h3>
                 </div>
                 <div id="elementItemData" class="div_k10Bfb0"></div>
 
             </div>
 
         </div>
-
     `)
 
     const { 
         elementItem, 
         elementItemLoad,
         elementItemNull,
-        elementItemData, 
+        elementItemData,
         buttonAdd 
     } = ele.object( ElementComponent.querySelectorAll('[id]'), 'id', true )
 
     const elements = {
-        form : formAsistencia(),
-        main : document.getElementById('main')
+        main : document.getElementById('main'),
+        form : formUsuario()
     }
 
     buttonAdd.addEventListener('click', ()=> {
@@ -57,6 +58,7 @@ export default ()=>{
 
     elements.form.addEventListener('_submit', e => {
         elements.form.remove()
+
         if( e.detail.status ) {
             dataLoadElementItem()
         }
@@ -67,8 +69,12 @@ export default ()=>{
         elementItemData.innerHTML = Data.map( (data, index) => {
             return `
                 ${ index == 0 ? '' : '<hr>' }
-                <a href="#/asistencia/${ data.id }" class="a_TE0KsGr pointer">
-                    ${ data.name }
+                <a href="#/usuario/${ data.uid }" class="a_H3w64kU pointer">
+                    <img src="${ api(`/storage/user/${ data.avatar || 'avatar.png' }`) }">
+                    <div>
+                        <span>${ data.fullname } ${ data.lastname }</span>
+                        <p>${ Position.find( position => position.id ==  data.position).name }</p>
+                    </div>
                     ${ Icon.get('fi fi-rr-angle-small-right') }
                 </a>
             `
@@ -78,31 +84,32 @@ export default ()=>{
     }
 
     const dataRenderElementItem =( Data = [] )=>{
+ 
         elementItem.innerHTML = ''
         elementItem.append(
             Data === 0 ? elementItemLoad : '',
-            Array.isArray(Data) && !Data.length ? elementItemNull : '',
-            Array.isArray(Data) && Data.length ? dataRenderElementItemData( Data ) : '',
+            Array.isArray( Data ) && !Data.length ? elementItemNull : '',
+            Array.isArray( Data ) && Data.length ? dataRenderElementItemData( Data ) : '',
         )
+
     }
 
     const dataLoadElementItem =()=>{
-
         const queries = {
             token : localStorage.getItem( 'auth-token' ),
             query : 0,
             query_limit : 50,
         }
 
-        fetch( api(`/api/asistencia?${ paramQueries( queries ) }`) )
+        fetch( api(`/api/user?${ paramQueries( queries ) }`) )
             .then( res => res.json() )
             .then( dataRenderElementItem )
 
     }
 
-    dataRenderElementItem(0)
+    dataRenderElementItem( 0 )
     dataLoadElementItem()
-    
+
     return ElementComponent 
 
 }

@@ -1,3 +1,5 @@
+window.dataLib = {}
+
 function rand( ...params ){
     const [ max, min = 0] = params.reverse()
     return Math.floor(Math.random() * ((max + 1) - min) + min)
@@ -428,7 +430,6 @@ class Hash {
     constructor(){
         this._params = []
         this._routes = []
-        this._dispatch = true 
     }
 
     param(route = '', callback = false){
@@ -439,21 +440,9 @@ class Hash {
 
     }
 
-    dispatch(callback){ 
+    dispatch(){ 
 
-        if( this._dispatch ) {
-
-            this._dispatch = false
-
-            const hashchange =()=>{
-                if (typeof callback === 'function') callback( this.__change() )
-                else this.__change()
-            }
-
-            hashchange()
-            window.addEventListener('hashchange', hashchange)
-            
-        }
+        return this.__change()
 
     }
 
@@ -490,16 +479,8 @@ class Hash {
 
         if(findRoute){
             sessionStorage.setItem('params', JSON.stringify( params ))
-
-            window.dataLib = {
-                params : params
-            }
-            
-            if (typeof findRoute.callback === 'function') {
-                return findRoute.callback( params ) 
-            }
-
-            return findRoute.callback
+            window.dataLib.params = params
+            return findRoute.callback( params ) 
         }
 
     }

@@ -15,7 +15,7 @@ export default (login = true)=>{
                 </div>
                 <form id="form" class="form_Wjg689O" autocomplete="off">
                     <div class="div_3N51Srm">
-                        ${ login ? '<input type="hidden" name="method" value="email">' : `                 
+                        ${ login ? '<input type="hidden" name="method" value="email">' : `                                      
                             <div class="div_RRjPQLY">
                                 <input type="text" name="fullname" placeholder="nombre" autocomplete="off">
                             </div>
@@ -26,6 +26,11 @@ export default (login = true)=>{
                         <div class="div_RRjPQLY">
                             <input type="password" name="password" placeholder="contraseña" autocomplete="off">
                         </div>
+                        ${ login ? '' : `                 
+                            <div class="div_RRjPQLY">
+                                <input type="text" name="code" placeholder="codigo" autocomplete="off">
+                            </div>
+                        ` }
                     </div>
                     <div class="div_jmyxzzW">
                         <button type="submit" class="pointer">${ login ? 'Ingresar' : 'Crear cuenta' }</button>
@@ -60,17 +65,16 @@ export default (login = true)=>{
 
             const queries = {
                 action : 'login',
-                to : 'user'
+                to : 'admin'
             }
 
             fetch( api(`/api/auth?${ paramQueries( queries ) }`), { method : 'POST', body : JSON.stringify( data ) } )
                 .then( res => res.json() )
                 .then(res => {
-
-                    if(res && res.status) { 
+                    if( res.status) { 
                         localStorage.setItem('auth-token', res.token)
                         location.hash = '#/'
-                    } else alert.show({ message : res.message ?? 'ocurrio un error' })
+                    } else alert.show({ message : res.message ?? 'Error al Ingresar' })
 
                 })
 
@@ -88,7 +92,8 @@ export default (login = true)=>{
             }
 
             const queries = {
-                action : 'register'
+                action : 'register',
+                code : form.code.value
             }
 
             fetch( api(`/api/auth?${ paramQueries( queries ) }`), { method : 'POST', body : JSON.stringify( data ) } )

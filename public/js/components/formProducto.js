@@ -9,9 +9,8 @@ export default (add = true, data = {})=>{
     const api =(uri = '')=> window.dataApp.api + uri
     const paramQueries = (query = {}) => Object.keys(query).map(key => `${ key }=${ query[key] }`).join('&')
 
-    const params = window.dataLib.params
-    const user  = window.dataApp.user
-    const Icon = window.dataApp.icon
+    const params    = window.dataLib.params
+    const Icon      = window.dataApp.icon
 
     const ElementComponent = ele.create(`
         <div class="div_txGdK5a">
@@ -24,7 +23,7 @@ export default (add = true, data = {})=>{
                 <form id="form" class="form_Wjg689O" autocomplete="off">
                     <div class="div_3N51Srm">
                         <div style="display:none">
-                            <input type="hidden" name="avatar">
+                            <input type="hidden" name="img">
                         </div>
                         <div class="div_RRjPQLY scroll-x" style="padding:15px">
                             <div class="div_ds7Y513">
@@ -36,29 +35,23 @@ export default (add = true, data = {})=>{
                             </div>
                         </div>
                         <div class="div_RRjPQLY">
-                            <input type="text" name="fullname" placeholder="nombre" autocomplete="off">
+                            <input type="text" name="sap" placeholder="sap" autocomplete="off">
                         </div>
                         <div class="div_RRjPQLY">
-                            <input type="text" name="lastname" placeholder="apellido" autocomplete="off">
+                            <input type="text" name="ean" placeholder="ean" autocomplete="off">
                         </div> 
                         <div class="div_RRjPQLY">
-                            <input type="text" name="email" placeholder="correo" autocomplete="off">
+                            <input type="text" name="description" placeholder="descripcion" autocomplete="off">
                         </div>
                         <div class="div_RRjPQLY">
-                            <input type="text" name="phone" placeholder="telefono" autocomplete="off">
+                            <input type="text" name="datetime_expirate" placeholder="fecha de vencimiento" autocomplete="off">
                         </div>
                         <div class="div_RRjPQLY">
-                            <input type="text" name="password" placeholder="contraseña" autocomplete="off">
+                            <input type="text" name="id_categoria" placeholder="categoria" autocomplete="off">
                         </div>
                         <div class="div_RRjPQLY">
-                            <input type="text" name="birthdate" placeholder="fecha de nacimiento" autocomplete="off">
-                        </div>
-                        <div class="div_RRjPQLY">
-                            <input type="text" name="position" placeholder="posicion" autocomplete="off">
-                        </div>
-                        <div class="div_RRjPQLY">
-                            <input type="text" name="gender" placeholder="genero" autocomplete="off">
-                        </div>
+                            <input type="text" name="id_marca" placeholder="marca" autocomplete="off">
+                        </div>  
                         <div class="div_RRjPQLY">
                             <div class="div_UA3v267">
                                 <span class="span_Q60Cjey">Habilitar</span>
@@ -86,9 +79,9 @@ export default (add = true, data = {})=>{
     const elementAlert = new Alert( main )
 
     const elements = {
-        birthdate : calendar( data.birthdate ),
-        position : options( 'position', data.position ),
-        gender   : options( 'gender', data.gender )
+        datetime_expirate : calendar( data.datetime_expirate ),
+        id_categoria : options( 'categoria', data.id_categoria ),
+        id_marca   : options( 'marca', data.id_marca )
     }
 
     let fileImage = null
@@ -96,36 +89,33 @@ export default (add = true, data = {})=>{
     if( !add ) {
 
         form.querySelectorAll('input').forEach(element => {
-
-
-            if( element.name == 'avatar' ) {
+            
+            if( element.name == 'img' ) {
                 if( data[ element.name ] ) {
                     containerImageElement.innerHTML = `
                         <div class="div_4RCIRxr">
-                            <img src="${ api(`/storage/user/${ data[ element.name ] }`) }" class="img_zEgR0X2" alt="img-producto">
+                            <img src="${ api(`/storage/productos/${ data[ element.name ] }`) }" class="img_zEgR0X2" alt="img-producto">
                             <button type="button" class="button_C96kN0x" >${ Icon.get('fi fi-rr-cross-small') }</button>
                         </div>
                     `
                 }
             }
 
-            if( element.name == 'birthdate' ) {
+            if( element.name == 'datetime_expirate' ) {
                 const datetime = new Date( data[ element.name ] )
                 element.value = `${ datetime.getDate() } ${ Month[ datetime.getMonth() ] } ${ datetime.getFullYear() }`
             }
 
-            else if( element.name == 'position' ) {
-                element.value = Position.find( position => position.id ==  data[ element.name ]).name
+            else if( element.name == 'id_categoria' ) {
+                const categoria = JSON.parse( data.data_categoria ).name
+                element.value = categoria
             }
 
-            else if( element.name == 'gender' ) {
-                element.value = (Gender.find( gender => gender.id ==  data[ element.name ]) ?? {}).name ?? '-'
+            else if( element.name == 'id_marca' ) {
+                const marca = JSON.parse( data.data_marca ).name
+                element.value = marca
             }
-
-            else if( element.name == 'password' ) {
-                element.parentElement.remove()
-            }
-
+ 
             else if( element.name == 'status' ) {
                 element.checked = data[ element.name ]
             }
@@ -139,7 +129,7 @@ export default (add = true, data = {})=>{
 
     }
 
-    Array.from([ form.birthdate, form.position, form.gender ]).forEach(element => {
+    Array.from([ form.datetime_expirate, form.id_categoria, form.id_marca ]).forEach(element => {
         element.setAttribute( 'data-value', data[ element.name ] ?? '')
         element.setAttribute( 'readonly', '')
 
@@ -148,22 +138,22 @@ export default (add = true, data = {})=>{
         })
     })
 
-    elements.birthdate.addEventListener('_change', (e)=> {
+    elements.datetime_expirate.addEventListener('_change', (e)=> {
         const datetime = new Date( e.detail.datetime ) 
-        form.birthdate.value = `${ datetime.getDate() } ${ Month[ datetime.getMonth() ] } ${ datetime.getFullYear() }`
-        form.birthdate.dataset.value = e.detail.datetime 
+        form.datetime_expirate.value = `${ datetime.getDate() } ${ Month[ datetime.getMonth() ] } ${ datetime.getFullYear() }`
+        form.datetime_expirate.dataset.value = e.detail.datetime 
     })
 
-    elements.position.addEventListener('_change', (e)=> {
+    elements.id_categoria.addEventListener('_change', (e)=> {
         const data = e.detail.data
-        form.position.value = data.name
-        form.position.dataset.value = data.id
+        form.id_categoria.value = data.name
+        form.id_categoria.dataset.value = data.id
     })
 
-    elements.gender.addEventListener('_change', (e)=> {
+    elements.id_marca.addEventListener('_change', (e)=> {
         const data = e.detail.data
-        form.gender.value = data.name
-        form.gender.dataset.value = data.id
+        form.id_marca.value = data.name
+        form.id_marca.dataset.value = data.id
     })
 
     closeElement.addEventListener('click', ()=> {
@@ -182,7 +172,7 @@ export default (add = true, data = {})=>{
             button.closest('.div_4RCIRxr').remove()
             fileImage = null
 
-            form.avatar.value = ''
+            form.img.value = ''
         }
 
     })
@@ -200,7 +190,7 @@ export default (add = true, data = {})=>{
                 containerImageElement.innerHTML = `
                     <div class="div_4RCIRxr">
                         <img src="${ URL.createObjectURL(file) }" class="img_zEgR0X2" alt="img-producto">
-                        <button type="button" class="button_C96kN0x" >${ Icon.get('fi fi-rr-cross-small') }</button>
+                        <button type="button" class="button_C96kN0x pointer" >${ Icon.get('fi fi-rr-cross-small') }</button>
                     </div>
                 `
 
@@ -215,37 +205,31 @@ export default (add = true, data = {})=>{
         e.preventDefault()
 
         const data = {
-            user : {
-                avatar   : form.avatar.value,
-                fullname : form.fullname.value ?? '',
-                lastname : form.lastname.value ?? '',
-                email : form.email.value ?? '',
-                phone : form.phone.value ?? '',
-                birthdate : form.birthdate.dataset.value ?? '',
-                gender : form.gender.dataset.value ?? '',
-                position : form.position.dataset.value ?? '',
-                status   : form.status.checked ? 1 : 0
-            }
+            img : form.img.value,
+            sap : form.sap.value ?? null,
+            ean : form.ean.value ?? '',
+            description : form.description.value ?? '',
+            id_categoria : form.id_categoria.dataset.value ?? '',
+            id_marca : form.id_marca.dataset.value ?? '',
+            datetime_expirate : form.datetime_expirate.dataset.value,
+            status   : form.status.checked ? 1 : 0
         }
 
         const queries = {
             token : localStorage.getItem('auth-token'),
-            uid    : params.id || user.uid
+            id    : params.id
         }
 
         const submit = () =>{
             if( add ) {
-                delete queries.uid
-
-                data.auth =  {
-                    password : form.password.value ?? ''
-                }
+                delete queries.id
                 
-                fetch( api(`/api/user?${ paramQueries(queries) }`), { method : 'POST', body : JSON.stringify( data ) } )
+                fetch( api(`/api/producto?${ paramQueries(queries) }`), { method : 'POST', body : JSON.stringify( data ) } )
                     .then( res => res.json() )
                     .then(res => {
+                        console.log(res)
                         ElementComponent.dispatchEvent(new CustomEvent('_submit', { detail: { status : res.status } }))
-                        if(res.status) {
+                        if(res.status ) {
                             fileImage = null
                             elementAlert.show({ message : 'Agregado correctamente', name : 'success' })
                         } 
@@ -253,10 +237,9 @@ export default (add = true, data = {})=>{
                     })
             } else {
                
-                fetch( api(`/api/user?${ paramQueries(queries) }`),  { method : 'PATCH', body : JSON.stringify( data.user ) } )
+                fetch( api(`/api/producto?${ paramQueries(queries) }`),  { method : 'PATCH', body : JSON.stringify( data ) } )
                     .then( res => res.json() )
                     .then(res => {
-                        console.log(res);
                         ElementComponent.dispatchEvent(new CustomEvent('_submit', { detail: { status : res.status } }))
                         if(res.status ) {
                             fileImage = null
@@ -268,7 +251,7 @@ export default (add = true, data = {})=>{
         }
 
         if( fileImage ) {
-            fetch(api('/api/files?to=user'), {
+            fetch(api('/api/files?to=product'), {
                 method : 'POST',
                 body   : objectFormData({
                     file : fileImage
@@ -277,7 +260,7 @@ export default (add = true, data = {})=>{
                 .then(res => res.json())
                 .then(res => {
                     if( res.status ) {
-                        data.user.avatar = res.name
+                        data.img = res.name
                         submit()
                     }
                 })

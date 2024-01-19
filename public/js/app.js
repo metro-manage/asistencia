@@ -15,10 +15,11 @@ export default ()=>{
     window.addEventListener('contextmenu', e => e.preventDefault())
 
     document.getElementById('root')
-        .append( header(),
-            ele.create('<main class="main" id="main"></main>')
+        .append( 
+            header(),
+            routes()
         )
 
-        routes()
+        
         
 }

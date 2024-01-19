@@ -1,17 +1,9 @@
 export default ( page, ...params )=>{
 
+    const element = document.createElement('div')
+
     const api =(uri = '')=> window.dataApp.api + uri
     const paramQueries = (query = {}) => Object.keys(query).map(key => `${ key }=${ query[key] }`).join('&') 
-
-    let active = true
-
-    const main = document.getElementById( 'main' )
-
-    main.innerHTML = `
-        <div class="container-loader">
-            <span class="loader"></span>
-        </div>
-    `
 
     const queries = {
         token : localStorage.getItem('auth-token')
@@ -21,25 +13,18 @@ export default ( page, ...params )=>{
         .then( res => res.json() )
         .then( data => { 
             
-            if( !active ) return
-
             if( data ) {
                 location.hash = '#/'
                 return
             }
 
+            window.dataApp.user = {}
             localStorage.removeItem('auth-token')
-
-            main.textContent = ''
-            main.append( page( ...params ) )
+            
+            element.replaceWith( page( ...params ) ) 
             
         })
 
-    const eventHashchange = () => {
-        active = false
-        removeEventListener('hashchange', eventHashchange)
-    }
-
-    addEventListener('hashchange', eventHashchange)
+    return element
 
 }   
