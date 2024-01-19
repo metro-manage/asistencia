@@ -19,7 +19,7 @@ export default ( page, ...params )=>{
                 return
             }
 
-            if( ![1, 2].includes(data.user_data.position) ) {
+            if( ![3].includes(data.user_data.position) ) {
                 localStorage.removeItem('auth-token')
                 location.hash = '#/login'
                 return
@@ -33,4 +33,4 @@ export default ( page, ...params )=>{
 
     return element
    
-}   
+}

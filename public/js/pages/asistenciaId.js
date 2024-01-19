@@ -1,13 +1,7 @@
 import Day from "../data/Day.js"
 import Month from "../data/Month.js"
 import calendar from "../components/calendar.js"
-
-import option from "../components/option.js"
-import confirm from "../components/confirm.js"
-
-import asistenciaListUser from "../components/asistenciaListUser.js"
-import asistenciaListUserAdd from "../components/asistenciaListUserAdd.js"
-import formAsistencia from "../components/formAsistencia.js"
+import Asistencia from "../data/Asistencia.js"
  
 export default ( params )=>{
 
@@ -15,25 +9,22 @@ export default ( params )=>{
     const paramQueries = (query = {}) => Object.keys(query).map(key => `${ key }=${ query[key] }`).join('&')
 
     const Icon = window.dataApp.icon
+    const user = window.dataApp.user
 
     const ElementComponent = ele.create(`
         <div class="div_FJZ0jdm">
 
-            <header id="header" class="header_N8p7RP6">
+            <header class="header_N8p7RP6">
                     
                 <div class="div_349Zfgp scroll-h">
                     <a href="#/asistencia" class="button_0530xdO pointer">${ Icon.get('fi fi-rr-angle-left') }</a>
-                    <h4 id="textAsistencia" class="text-ellipsis">-</h4>
-                </div>
-
-                <div id="elementButton" class="div_div_wEan0TY">
-                    <button id="buttonOption" class="button_0530xdO pointer">${ Icon.get('fi fi-rr-menu-dots-vertical') }</button>
+                    <h4 class="text-ellipsis">Asistencia por usuario</h4>
                 </div>
 
             </header>
 
             <div id="elementItem" class="div_tbtwCa7">
-                <div id="elementItemLoad" class="element-loader" style="--color:var(--color-letter)"></div>
+                <div id="elementItemLoad" class="element-loader"></div>
                 <div id="elementItemNull" class="div_CgtrSP7">
                     ${ Icon.get('icon-light box-empty') }
                     <h3>La asistencia no existe</h3>
@@ -61,8 +52,6 @@ export default ( params )=>{
     `)
 
     const { 
-        header,
-        elementButton,
         elementItem, 
         elementItemLoad, 
         elementItemNull, 
@@ -73,63 +62,20 @@ export default ( params )=>{
         elementItemDataItemData,
         elementItemDataCalendarData,
         elementItemDataCalendarText,
-        buttonCalendar,
-        buttonOption,
-        textAsistencia
+        buttonCalendar
     } = ele.object( ElementComponent.querySelectorAll('[id]'), 'id', true )
 
     const elements = {
         main       : document.getElementById('main'),
-        calendar   : calendar(),
-        option     : option('asistencia', ['*']),
-        form       : '',
-        confirm    : confirm( { message : '¿ Desea Eliminar ?' } ),
-        asistenciaListUser : asistenciaListUser(),
-        asistenciaListUserAdd : asistenciaListUserAdd()
+        calendar   : calendar()
     }
-
-    const elementAlert = new Alert(elements.main)
 
     elements.calendar.addEventListener('_change', e => {
         dataLoadElementItemData( e.detail.datetime )
     })
 
-    elements.option.addEventListener('_click', e => {
-        const action = e.detail.action
-
-        elements.main.append(
-            action == 'add_user' ? elements.asistenciaListUserAdd  : '',
-            action == 'list_user' ? elements.asistenciaListUser  : '',
-            action == 'update' ? elements.form  : '',
-            action == 'delete' ? elements.confirm  : '',
-        )
-        
-    })
-
-    elements.confirm.addEventListener('_click', ()=> {
-
-        const queries = {
-            token : localStorage.getItem('auth-token'),
-            id    : params.id
-        }
-
-        fetch( api(`/api/asistencia?${ paramQueries( queries ) }`), { method : 'DELETE' } )
-            .then( res => res.json() )
-            .then(res => {
-                if(res) {
-                    location.hash = '#/asistencia'
-                }
-                else elementAlert.show({ message : 'Error al eliminar' })
-            }) 
-
-    })
-
     buttonCalendar.addEventListener('click', ()=> {
         elements.main.append( elements.calendar )    
-    })
-
-    buttonOption.addEventListener('click', ()=> {
-        elements.main.append( elements.option )
     })
 
     elementItemDataCalendarData.addEventListener('click', e => {
@@ -166,15 +112,16 @@ export default ( params )=>{
     }
 
     const dataRenderElementItemDataItemData =( Data = [] )=>{
+
         const datetime = {
             status  : true,
             value   : null,
             text    : ''
-        }
+        } 
 
         elementItemDataItemData.innerHTML = Data.map( data => {
-            data.data_user = JSON.parse( data.data_user )
             datetime.status = datetime.value != data.datetime
+            data.detail = JSON.parse( data.detail )
 
             if( datetime.status ) {
                 datetime.value = data.datetime
@@ -190,14 +137,22 @@ export default ( params )=>{
                         <h4>${ datetime.text }</h4>
                     </div>
                 ` : '' }
-                <div class="div_sWWE7xn">
-                    <a href="#/asistencia/${ params.id }/user/${ data.data_user.uid }" class="a_ATa4V6t pointer">
-                        <img src="${ api(`/storage/user/${ data.data_user.avatar || 'avatar.png' }`) }">
-                        <span>${ data.data_user.fullname } ${ data.data_user.lastname }</span>
-                        ${ Icon.get('fi fi-rr-angle-right') }
-                    </a>
+                <div class="div_609YKK1">
+                    ${
+
+                        data.detail.map( detail => {
+                            const datetime = new Date( detail.datetime )
+                            const datetimeText = `${ datetime.getHours() > 12 ? datetime.getHours() - 12 : datetime.getHours() }:${ datetime.getMinutes() }:${ datetime.getSeconds() } ${ datetime.getHours() > 12 ? 'PM' : 'AM' }`
+
+                            return `
+                                <div class="div_ng4hr6s"><span>${ Asistencia.find( asistencia => asistencia.id == detail.id ).name }</span><span>${ datetimeText }</span></div>
+                            `
+
+                        } ).join('')
+
+                    } 
                 </div>
-            ` 
+            `
         }).join('')
 
         return elementItemDataItemData
@@ -211,7 +166,7 @@ export default ( params )=>{
             Array.isArray(Data) && !Data.length ? elementItemDataItemNull : '',
             Array.isArray(Data) && Data.length ? dataRenderElementItemDataItemData( Data ) : ''
         )
- 
+
     }
 
     const dataLoadElementItemData =( datetime = null )=>{
@@ -220,17 +175,17 @@ export default ( params )=>{
 
         const queries = {
             token : localStorage.getItem('auth-token'),
-            query : [1, 2].join(','),
-            query_order : 'datetime, desc',
-            query_limit : 50,
-            id_asistencia : params.id,
-            datetime : datetimeToday( datetime )
+            query : [2, 2].join(','),
+            query_order     : 'datetime, desc',
+            id_asistencia   : params.id,
+            uid_user   : user.uid,
+            datetime
         }
 
-        fetch( api( `/api/asistencia-list?${ paramQueries( queries ) }` ) )
+        fetch( api(`/api/asistencia-list?${ paramQueries( queries ) }`) )
             .then( res => res.json() )
             .then( dataRenderElementItemData )
- 
+
         dataRenderElementItemDataCalendarData( datetimeWeek( datetime ), datetime )
         dataRenderElementItemData( 0 )
         return elementItemData
@@ -238,43 +193,26 @@ export default ( params )=>{
 
     const dataRenderElementItem =(data = null)=>{
 
-        const isData = data && Object.keys( data )
-
-        header.append(
-            isData ? elementButton : ''
-        )
-        
         elementItem.innerHTML = ''
         elementItem.append(
             data === 0 ? elementItemLoad : '',
             data === null ? elementItemNull : '',
-            isData ? dataLoadElementItemData( null ) : ''
+            data && Object.keys( data ) ? dataLoadElementItemData( null ) : ''
         )
 
-        if( isData ) {
-            textAsistencia.textContent = data.name
-            if( elements.form == '' ) {
-                elements.form = formAsistencia(false, data)
-                elements.form.addEventListener('_submit', e => {
-                    elements.form.remove()
-                    if (e.detail.status) {
-                        dataLoadElementItem()
-                    }
-                })
-            }
-        }
     }
 
     const dataLoadElementItem =( )=>{
 
         const queries = {
             token : localStorage.getItem('auth-token'),
-            query : 0,
+            query : [3, 1].join(','),
             query_limit: 'one',
-            id    : params.id
+            id_asistencia    : params.id,
+            uid_user    : user.uid
         }
 
-        fetch( api( `/api/asistencia?${ paramQueries( queries ) }` ) )
+        fetch( api( `/api/asistencia-user?${ paramQueries( queries ) }` ) )
             .then( res => res.json() )
             .then( dataRenderElementItem )  
         
@@ -283,9 +221,7 @@ export default ( params )=>{
     dataRenderElementItem( 0 )
     dataLoadElementItem()
  
-    Array.from([ elementButton ]).forEach( element => element.remove() )
-
     return ElementComponent
 }
- 
+
  

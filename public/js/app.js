@@ -5,7 +5,7 @@ import routes from "./src/routes.js"
 export default ()=>{
 
     theme()
-
+    
     window.dataApp = {
         click : false,
         api   : 'https://api-metro.victor01sp.com',
@@ -19,7 +19,5 @@ export default ()=>{
             header(),
             routes()
         )
-
-        
         
 }

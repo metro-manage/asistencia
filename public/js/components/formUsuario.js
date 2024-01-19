@@ -53,13 +53,13 @@ export default (add = true, data = {})=>{
                         <div class="div_RRjPQLY">
                             <input type="text" name="birthdate" placeholder="fecha de nacimiento" autocomplete="off">
                         </div>
-                        <div class="div_RRjPQLY">
+                        <div class="div_RRjPQLY" style="display:none">
                             <input type="text" name="position" placeholder="posicion" autocomplete="off">
                         </div>
                         <div class="div_RRjPQLY">
                             <input type="text" name="gender" placeholder="genero" autocomplete="off">
                         </div>
-                        <div class="div_RRjPQLY">
+                        <div class="div_RRjPQLY" style="display:none">
                             <div class="div_UA3v267">
                                 <span class="span_Q60Cjey">Habilitar</span>
                                 <label class="toggle">

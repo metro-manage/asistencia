@@ -1,11 +1,10 @@
-import formAsistencia from "../components/formAsistencia.js"
-
 export default ()=>{
     
     const api =(uri = '')=> window.dataApp.api + uri
     const paramQueries = (query = {}) => Object.keys(query).map(key => `${ key }=${ query[key] }`).join('&')
 
     const Icon = window.dataApp.icon
+    const user = window.dataApp.user
  
     const ElementComponent = ele.create(`
         <div class="div_FJZ0jdm">
@@ -16,11 +15,7 @@ export default ()=>{
                     <a href="#/" class="button_0530xdO pointer">${ Icon.get('fi fi-rr-angle-left') }</a>
                     <h4 class="text-ellipsis">Asistencia</h4>
                 </div>
-
-                <div class="div_div_wEan0TY">
-                    <button id="buttonAdd" class="button_0530xdO pointer">${ Icon.get('fi fi-rr-plus') }</button>
-                </div>
-
+ 
             </header>
 
             <div id="elementItem" class="div_f0Au33C scroll-y">
@@ -28,7 +23,7 @@ export default ()=>{
                 <div id="elementItemLoad" class="element-loader" style="--color:var(--color-letter)"></div>
                 <div id="elementItemNull" class="div_CgtrSP7">
                     ${ Icon.get('icon-light box-empty') }
-                    <h3>Lista vacia</h3>
+                    <h3>La asistencia no existe</h3>
                 </div>
                 <div id="elementItemData" class="div_k10Bfb0"></div>
 
@@ -40,33 +35,15 @@ export default ()=>{
 
     const { 
         elementItem, 
-        elementItemLoad,
-        elementItemNull,
-        elementItemData, 
-        buttonAdd 
+        elementItemLoad, 
+        elementItemNull, 
+        elementItemData 
     } = ele.object( ElementComponent.querySelectorAll('[id]'), 'id', true )
-
-    const elements = {
-        form : formAsistencia(),
-        main : document.getElementById('main')
-    }
-
-    buttonAdd.addEventListener('click', ()=> {
-        elements.main.append( elements.form )
-    })
-
-    elements.form.addEventListener('_submit', e => {
-        elements.form.remove()
-        if( e.detail.status ) {
-            dataLoadElementItem()
-        }
-    })
 
     const dataRenderElementItemData =( Data = [] )=>{
 
-        elementItemData.innerHTML = Data.map( (data, index) => {
+        elementItemData.innerHTML = Data.map( data => {
             return `
-                ${ index == 0 ? '' : '<hr>' }
                 <a href="#/asistencia/${ data.id }" class="a_TE0KsGr pointer">
                     ${ data.name }
                     ${ Icon.get('fi fi-rr-angle-small-right') }
@@ -77,32 +54,35 @@ export default ()=>{
         return elementItemData
     }
 
-    const dataRenderElementItem =( Data = [] )=>{
+    const dataRenderElementItem =(Data = 0)=>{
+
         elementItem.innerHTML = ''
         elementItem.append(
             Data === 0 ? elementItemLoad : '',
             Array.isArray(Data) && !Data.length ? elementItemNull : '',
-            Array.isArray(Data) && Data.length ? dataRenderElementItemData( Data ) : '',
+            Array.isArray(Data) && Data.length ? dataRenderElementItemData( Data ) : ''
         )
+ 
     }
 
     const dataLoadElementItem =()=>{
 
         const queries = {
             token : localStorage.getItem( 'auth-token' ),
-            query : 0,
-            query_limit : 50,
+            query : [3,1].join(','),
+            limit : 50,
+            uid_user    : user.uid
         }
 
-        fetch( api(`/api/asistencia?${ paramQueries( queries ) }`) )
+        fetch( api(`/api/asistencia-user?${ paramQueries( queries ) }`) )
             .then( res => res.json() )
             .then( dataRenderElementItem )
-
+            
     }
 
-    dataRenderElementItem(0)
+    dataRenderElementItem( 0 )
     dataLoadElementItem()
-    
+  
     return ElementComponent 
 
 }

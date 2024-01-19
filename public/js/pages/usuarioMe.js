@@ -72,7 +72,7 @@ export default ()=>{
         main    : document.getElementById('main'),
         form    : '',
         form2   : formUsuarioPassword(),
-        option  : option('usuario', ['*']),
+        option  : option('usuario', ['update', 'update_password']),
         confirm : confirm( { message : '¿ Desea Eliminar ?' } ),
     }
 
@@ -157,15 +157,15 @@ export default ()=>{
             }
 
             else if( title.key == 'position' ) {
-
-                return `
-                    <div class="div_juBP4RD">
-                        <div class="div_20gl6i6">
-                            <span>${ title.title }</span>
-                            <p>${ Position.find( position => position.id ==  data[ title.key  ]).name }</p>
-                        </div>
-                    </div>
-                `
+                return ''
+                // return `
+                //     <div class="div_juBP4RD">
+                //         <div class="div_20gl6i6">
+                //             <span>${ title.title }</span>
+                //             <p>${ Position.find( position => position.id ==  data[ title.key  ]).name }</p>
+                //         </div>
+                //     </div>
+                // `
 
             }
 
@@ -217,7 +217,7 @@ export default ()=>{
 
         const queries = {
             token : localStorage.getItem( 'auth-token' ),
-            query : 0,
+            query : 1,
             query_limit : 'one',
             uid    : user.uid,
         }
