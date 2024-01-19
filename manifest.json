@@ -4,9 +4,9 @@
     "display": "standalone",
     "scope": "",
     "start_url": "index.html",
-    "name": "app administrador",
-    "short_name": "administrador",
-    "description": "manejo de inventario, asistencia",
+    "name": "app asistencia",
+    "short_name": "asistencia",
+    "description": "CRUD asistencia",
     "icons": [
         {
             "src": "public/img/icon/icon-192x192.png",
